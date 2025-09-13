@@ -24,7 +24,6 @@
         }
         .product-card {
             background: white;
-            border-radius: 0;
             padding: 15px;
             text-align: center;
             border: 1px solid #eee;
@@ -74,7 +73,6 @@
             margin-top: 10px;
             font-weight: bold;
             width: 100%;
-            border: none;
             cursor: pointer;
         }
         .disclaimer {
@@ -110,6 +108,7 @@
                 </div>
                 <a href="#" class="buy-button" target="_blank">View deal</a>
             </div>
+            
             <div class="product-card">
                 <img src="https://via.placeholder.com/250" alt="Product" class="product-image">
                 <div class="product-title">LCD Smart Key</div>
@@ -120,6 +119,7 @@
                 </div>
                 <a href="#" class="buy-button" target="_blank">View deal</a>
             </div>
+            
             <div class="product-card">
                 <img src="https://via.placeholder.com/250" alt="Product" class="product-image">
                 <div class="product-title">Car Net in Stock for All Cars</div>
@@ -130,6 +130,7 @@
                 </div>
                 <a href="#" class="buy-button" target="_blank">View deal</a>
             </div>
+            
             <div class="product-card">
                 <img src="https://via.placeholder.com/250" alt="Product" class="product-image">
                 <div class="product-title">new smart key 4</div>
@@ -141,6 +142,7 @@
                 <a href="#" class="buy-button" target="_blank">View deal</a>
             </div>
         </div>
+        
         <div class="disclaimer">
             As an Amazon Associate I earn from qualifying purchases.
         </div>
