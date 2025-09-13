@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Мой Магазин</title>
+    <title>Product Store</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f8f8f8;
+            background-color: #ffffff;
             margin: 0;
             padding: 20px;
             color: #333;
@@ -18,40 +18,29 @@
         }
         .product-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
             padding: 20px 0;
         }
         .product-card {
             background: white;
-            border-radius: 10px;
+            border-radius: 0;
             padding: 15px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
             text-align: center;
-            transition: transform 0.3s ease;
-        }
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border: 1px solid #eee;
         }
         .product-image {
             max-width: 100%;
             height: 180px;
             object-fit: contain;
             margin-bottom: 15px;
-            border-radius: 5px;
         }
         .product-title {
             font-weight: bold;
             margin: 10px 0;
             font-size: 16px;
-            min-height: 40px;
-        }
-        .product-description {
-            font-size: 14px;
-            color: #666;
-            margin: 10px 0;
-            min-height: 40px;
+            height: 40px;
+            overflow: hidden;
         }
         .price-container {
             margin: 15px 0;
@@ -60,12 +49,13 @@
             text-decoration: line-through;
             color: #999;
             font-size: 14px;
+            display: inline-block;
+            margin-right: 5px;
         }
         .save-badge {
             color: #388e3c;
             font-size: 14px;
             font-weight: bold;
-            margin-left: 5px;
         }
         .new-price {
             color: #e65100;
@@ -75,34 +65,29 @@
             margin: 5px 0;
         }
         .buy-button {
-            background-color: #4285f4;
+            background-color: #000;
             color: white;
-            padding: 12px 20px;
+            padding: 12px 0;
             text-decoration: none;
-            border-radius: 5px;
-            display: inline-block;
+            border-radius: 3px;
+            display: block;
             margin-top: 10px;
             font-weight: bold;
+            width: 100%;
             border: none;
             cursor: pointer;
-            width: 100%;
-            transition: background-color 0.3s;
-        }
-        .buy-button:hover {
-            background-color: #3367d6;
         }
         .disclaimer {
             text-align: center;
-            margin-top: 40px;
-            font-size: 0.8em;
+            margin-top: 60px;
+            font-size: 11px;
             color: #666;
             padding: 20px;
-            border-top: 1px solid #eee;
+            font-style: italic;
         }
-        @media (max-width: 768px) {
+        @media (max-width: 1024px) {
             .product-grid {
                 grid-template-columns: repeat(2, 1fr);
-                gap: 15px;
             }
         }
         @media (max-width: 480px) {
@@ -114,28 +99,58 @@
 </head>
 <body>
     <div class="container">
-        <h1 style="text-align: center; color: #333; margin-bottom: 10px;">Мой Магазин</h1>
-        <p style="text-align: center; color: #666; margin-bottom: 30px;">Лучшие товары по выгодным ценам</p>
-        
         <div class="product-grid">
-            <!-- ОБРАЗЕЦ ТОВАРА - ЗАМЕНИТЕ ЭТИ ДАННЫЕ НА СВОИ -->
+            <!-- PRODUCT 1 -->
             <div class="product-card">
-                <img src="https://via.placeholder.com/250" alt="Товар" class="product-image">
+                <img src="https://via.placeholder.com/250" alt="Main smart key 2" class="product-image">
                 <div class="product-title">Main smart key 2</div>
-                <div class="product-description">Высококачественный умный ключ для вашего автомобиля</div>
                 <div class="price-container">
-                    <span class="old-price">$849,00</span>
+                    <span class="old-price">was $849,00</span>
                     <span class="save-badge">Save 22%</span>
                     <span class="new-price">$99,00</span>
                 </div>
-                <a href="https://www.amazon.com/" class="buy-button" target="_blank">Купить на Amazon</a>
+                <a href="YOUR_AMAZON_AFFILIATE_LINK_1" class="buy-button" target="_blank">View deal</a>
             </div>
-            <!-- КОНЕЦ ОБРАЗЦА -->
+
+            <!-- PRODUCT 2 -->
+            <div class="product-card">
+                <img src="https://via.placeholder.com/250" alt="LCD Smart Key" class="product-image">
+                <div class="product-title">LCD Smart Key</div>
+                <div class="price-container">
+                    <span class="old-price">was $849,00</span>
+                    <span class="save-badge">Save 9%</span>
+                    <span class="new-price">$99,00</span>
+                </div>
+                <a href="YOUR_AMAZON_AFFILIATE_LINK_2" class="buy-button" target="_blank">View deal</a>
+            </div>
+
+            <!-- PRODUCT 3 -->
+            <div class="product-card">
+                <img src="https://via.placeholder.com/250" alt="Car Net" class="product-image">
+                <div class="product-title">Car Net in Stock for All Cars</div>
+                <div class="price-container">
+                    <span class="old-price">was $849,00</span>
+                    <span class="save-badge">Save 25%</span>
+                    <span class="new-price">$149,00</span>
+                </div>
+                <a href="YOUR_AMAZON_AFFILIATE_LINK_3" class="buy-button" target="_blank">View deal</a>
+            </div>
+
+            <!-- PRODUCT 4 -->
+            <div class="product-card">
+                <img src="https://via.placeholder.com/250" alt="New smart key" class="product-image">
+                <div class="product-title">new smart key 4</div>
+                <div class="price-container">
+                    <span class="old-price">was $849,00</span>
+                    <span class="save-badge">Save 10%</span>
+                    <span class="new-price">$95,00</span>
+                </div>
+                <a href="YOUR_AMAZON_AFFILIATE_LINK_4" class="buy-button" target="_blank">View deal</a>
+            </div>
         </div>
 
         <div class="disclaimer">
-            <p>As an Amazon Associate I earn from qualifying purchases.</p>
-            <p>Я участвую в партнерской программе Amazon и получаю комиссию с qualifying purchases.</p>
+            As an Amazon Associate I earn from qualifying purchases.
         </div>
     </div>
 </body>
