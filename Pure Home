@@ -100,55 +100,47 @@
 <body>
     <div class="container">
         <div class="product-grid">
-            <!-- PRODUCT 1 -->
             <div class="product-card">
-                <img src="https://via.placeholder.com/250" alt="Main smart key 2" class="product-image">
+                <img src="https://via.placeholder.com/250" alt="Product" class="product-image">
                 <div class="product-title">Main smart key 2</div>
                 <div class="price-container">
                     <span class="old-price">was $849,00</span>
                     <span class="save-badge">Save 22%</span>
                     <span class="new-price">$99,00</span>
                 </div>
-                <a href="YOUR_AMAZON_AFFILIATE_LINK_1" class="buy-button" target="_blank">View deal</a>
+                <a href="#" class="buy-button" target="_blank">View deal</a>
             </div>
-
-            <!-- PRODUCT 2 -->
             <div class="product-card">
-                <img src="https://via.placeholder.com/250" alt="LCD Smart Key" class="product-image">
+                <img src="https://via.placeholder.com/250" alt="Product" class="product-image">
                 <div class="product-title">LCD Smart Key</div>
                 <div class="price-container">
                     <span class="old-price">was $849,00</span>
                     <span class="save-badge">Save 9%</span>
                     <span class="new-price">$99,00</span>
                 </div>
-                <a href="YOUR_AMAZON_AFFILIATE_LINK_2" class="buy-button" target="_blank">View deal</a>
+                <a href="#" class="buy-button" target="_blank">View deal</a>
             </div>
-
-            <!-- PRODUCT 3 -->
             <div class="product-card">
-                <img src="https://via.placeholder.com/250" alt="Car Net" class="product-image">
+                <img src="https://via.placeholder.com/250" alt="Product" class="product-image">
                 <div class="product-title">Car Net in Stock for All Cars</div>
                 <div class="price-container">
                     <span class="old-price">was $849,00</span>
                     <span class="save-badge">Save 25%</span>
                     <span class="new-price">$149,00</span>
                 </div>
-                <a href="YOUR_AMAZON_AFFILIATE_LINK_3" class="buy-button" target="_blank">View deal</a>
+                <a href="#" class="buy-button" target="_blank">View deal</a>
             </div>
-
-            <!-- PRODUCT 4 -->
             <div class="product-card">
-                <img src="https://via.placeholder.com/250" alt="New smart key" class="product-image">
+                <img src="https://via.placeholder.com/250" alt="Product" class="product-image">
                 <div class="product-title">new smart key 4</div>
                 <div class="price-container">
                     <span class="old-price">was $849,00</span>
                     <span class="save-badge">Save 10%</span>
                     <span class="new-price">$95,00</span>
                 </div>
-                <a href="YOUR_AMAZON_AFFILIATE_LINK_4" class="buy-button" target="_blank">View deal</a>
+                <a href="#" class="buy-button" target="_blank">View deal</a>
             </div>
         </div>
-
         <div class="disclaimer">
             As an Amazon Associate I earn from qualifying purchases.
         </div>
