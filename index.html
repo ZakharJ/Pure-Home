@@ -3,121 +3,1310 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Store</title>
+    <title>ChronoCanvas</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #ffffff;
+        * {
             margin: 0;
-            padding: 20px;
-            color: #333;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: monospace;
+            user-select: none;
         }
-        .container {
-            max-width: 1200px;
+        body {
+            background: #0f0f1a;
+            color: #e0e0ff;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        #game-container {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            height: 80vh;
             margin: 0 auto;
         }
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            padding: 20px 0;
+        canvas {
+            display: block;
+            background: #1a1a2f;
+            border-radius: 8px;
+            width: 100%;
+            height: 100%;
+            touch-action: none;
         }
-        .product-card {
-            background: white;
-            padding: 15px;
-            text-align: center;
-            border: 1px solid #eee;
+        .ui-panel {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 5, 20, 0.7);
+            padding: 10px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
-        .product-image {
-            max-width: 100%;
-            height: 180px;
-            object-fit: contain;
-            margin-bottom: 15px;
+        .ui-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-        .product-title {
-            font-weight: bold;
-            margin: 10px 0;
-            font-size: 16px;
-            height: 40px;
+        button {
+            background: #4a4a8f;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background: #5f5faf;
+        }
+        .meter-container {
+            width: 100px;
+            height: 12px;
+            background: #2a2a4a;
+            border-radius: 6px;
             overflow: hidden;
         }
-        .product-category {
-            font-size: 14px;
-            color: #666;
-            margin: 5px 0;
+        .meter-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00aaff, #00ffcc);
+            border-radius: 6px;
+            transition: width 0.3s;
         }
-        .price-container {
-            margin: 15px 0;
-        }
-        .old-price {
-            text-decoration: line-through;
-            color: #999;
-            font-size: 14px;
-            display: inline-block;
-            margin-right: 5px;
-        }
-        .save-badge {
-            color: #388e3c;
-            font-size: 14px;
-            font-weight: bold;
-        }
-        .new-price {
-            color: #e65100;
-            font-size: 18px;
-            font-weight: bold;
-            display: block;
-            margin: 5px 0;
-        }
-        .buy-button {
-            background-color: #000;
-            color: white;
-            padding: 12px 0;
-            text-decoration: none;
-            border-radius: 3px;
-            display: block;
-            margin-top: 10px;
-            font-weight: bold;
+        .mobile-controls {
+            position: absolute;
+            bottom: 20px;
             width: 100%;
-            cursor: pointer;
+            display: none;
+            justify-content: space-between;
+            padding: 0 20px;
         }
-        .disclaimer {
-            text-align: center;
-            margin-top: 60px;
-            font-size: 11px;
-            color: #666;
-            padding: 20px;
-            font-style: italic;
+        .control-group {
+            display: flex;
+            gap: 15px;
         }
-        @media (max-width: 1024px) {
-            .product-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
+        .control-btn {
+            width: 60px;
+            height: 60px;
+            background: rgba(100, 100, 180, 0.5);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
         }
-        @media (max-width: 480px) {
-            .product-grid {
-                grid-template-columns: 1fr;
+        #level-selector {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 5, 20, 0.7);
+            padding: 10px;
+            border-radius: 8px;
+        }
+        #editor-panel {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(0, 5, 20, 0.7);
+            padding: 10px;
+            border-radius: 8px;
+            display: none;
+            flex-wrap: wrap;
+            gap: 10px;
+            max-width: 300px;
+        }
+        @media (max-width: 768px) {
+            .mobile-controls {
+                display: flex;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="product-grid">
-            <!-- PRODUCT 1 - CeraVe -->
-            <div class="product-card">
-                <img src="https://i.postimg.cc/LhKGqD5n/photo-2025-08-30-14-03-37.jpg" alt="CeraVe Eye Repair Cream" class="product-image">
-                <div class="product-title">CeraVe Eye Repair Cream</div>
-                <div class="product-category">Beauty & Personal Care</div>
-                <div class="price-container">
-                    <span class="new-price">watch on amazon</span>
+    <h1>ChronoCanvas</h1>
+    <div id="game-container">
+        <canvas id="gameCanvas"></canvas>
+        <div class="ui-panel">
+            <div class="ui-row">
+                <span>Level: <span id="level-display">1</span></span>
+                <span>Crystals: <span id="crystals-display">0</span></span>
+            </div>
+            <div class="ui-row">
+                <span>Paint: </span>
+                <div class="meter-container">
+                    <div class="meter-fill" id="paint-meter"></div>
                 </div>
-                <a href="https://amzn.to/4n3PiHf" class="buy-button" target="_blank">View deal</a>
+            </div>
+            <div class="ui-row">
+                <button id="toggle-mode">Draw Mode (E)</button>
+                <button id="record-btn">Record (R)</button>
+                <button id="restart-btn">Restart</button>
+                <button id="mute-btn">Mute</button>
             </div>
         </div>
-        
-        <div class="disclaimer">
-            As an Amazon Associate I earn from qualifying purchases.
+        <div id="level-selector">
+            <select id="level-select">
+                <option value="1">Level 1</option>
+                <option value="2">Level 2</option>
+                <option value="3">Level 3</option>
+                <option value="4">Level 4</option>
+                <option value="5">Level 5</option>
+                <option value="6">Level 6</option>
+                <option value="7">Level 7</option>
+                <option value="8">Level 8</option>
+            </select>
+        </div>
+        <div id="editor-panel">
+            <button id="add-platform">Add Platform</button>
+            <button id="add-box">Add Box</button>
+            <button id="add-switch">Add Switch</button>
+            <button id="add-crystal">Add Crystal</button>
+            <button id="set-start">Set Start</button>
+            <button id="set-exit">Set Exit</button>
+            <button id="export-level">Export Level</button>
+        </div>
+        <div class="mobile-controls">
+            <div class="control-group">
+                <div class="control-btn" id="left-btn">←</div>
+                <div class="control-btn" id="right-btn">→</div>
+            </div>
+            <div class="control-group">
+                <div class="control-btn" id="jump-btn">↑</div>
+                <div class="control-btn" id="mode-btn">E</div>
+            </div>
         </div>
     </div>
+    <script>
+        // ===== README: ChronoCanvas =====
+        // A time-drawing puzzle platformer
+        // Controls:
+        // - A/D or Arrow Keys: Move
+        // - Space: Jump
+        // - E or Tab: Toggle between Draw/Run mode
+        // - R: Start/Stop recording ghost
+        // - Mouse/Touch: Draw platforms in Draw mode
+        // - M: Mute sound
+        // 
+        // Gameplay:
+        // 1. Draw platforms with your limited paint meter
+        // 2. Switch to Run mode and control your character
+        // 3. Record your actions to create time ghosts
+        // 4. Cooperate with your past selves to solve puzzles
+        // 5. Collect crystals and reach the exit
+        // =================================
+
+        // Game constants
+        const CANVAS_WIDTH = 900;
+        const CANVAS_HEIGHT = 600;
+        const GRAVITY = 0.5;
+        const JUMP_FORCE = -12;
+        const PLAYER_SPEED = 5;
+        const PLAYER_SIZE = 20;
+        const PLATFORM_THICKNESS = 15;
+        const MAX_PAINT = 1000;
+        const PAINT_DRAIN_RATE = 0.5;
+        const PAINT_RESTORE_RATE = 0.2;
+        const GHOST_COLOR = "rgba(100, 240, 255, 0.6)";
+
+        // Game state
+        let canvas, ctx;
+        let currentLevel = 0;
+        let gameState = {
+            mode: 'draw', // 'draw' or 'run'
+            recording: false,
+            muted: false,
+            player: { x: 0, y: 0, vx: 0, vy: 0, grounded: false, facing: 1 },
+            paint: MAX_PAINT,
+            crystals: 0,
+            requiredCrystals: 0,
+            platforms: [],
+            boxes: [],
+            switches: [],
+            crystalsList: [],
+            exit: { x: 0, y: 0, w: 40, h: 60, open: false },
+            ghosts: [],
+            recordingData: [],
+            recordingStartTime: 0,
+            editorMode: false,
+            editorObject: null
+        };
+
+        // Level data - 8 predefined levels
+        const levels = [
+            // Level 1: Introduction to drawing and basic movement
+            {
+                player: { x: 100, y: 400 },
+                exit: { x: 800, y: 420, open: true },
+                platforms: [
+                    { x: 0, y: 500, w: 300, h: 20 },
+                    { x: 400, y: 500, w: 500, h: 20 }
+                ],
+                boxes: [],
+                switches: [],
+                crystals: [],
+                requiredCrystals: 0
+            },
+            
+            // Level 2: Introduction to crystals and gaps
+            {
+                player: { x: 100, y: 400 },
+                exit: { x: 800, y: 420, open: false },
+                platforms: [
+                    { x: 0, y: 500, w: 200, h: 20 },
+                    { x: 300, y: 500, w: 400, h: 20 },
+                    { x: 800, y: 500, w: 100, h: 20 }
+                ],
+                boxes: [],
+                switches: [],
+                crystals: [{ x: 750, y: 450 }],
+                requiredCrystals: 1
+            },
+            
+            // Level 3: Introduction to recording and ghosts
+            {
+                player: { x: 100, y: 400 },
+                exit: { x: 800, y: 420, open: false },
+                platforms: [
+                    { x: 0, y: 500, w: 150, h: 20 },
+                    { x: 600, y: 500, w: 300, h: 20 }
+                ],
+                boxes: [],
+                switches: [],
+                crystals: [{ x: 750, y: 450 }],
+                requiredCrystals: 1
+            },
+            
+            // Level 4: Introduction to switches
+            {
+                player: { x: 100, y: 400 },
+                exit: { x: 800, y: 200, open: false },
+                platforms: [
+                    { x: 0, y: 500, w: 300, h: 20 },
+                    { x: 400, y: 500, w: 500, h: 20 },
+                    { x: 600, y: 300, w: 100, h: 20, id: 'moving', moving: true }
+                ],
+                boxes: [],
+                switches: [
+                    { x: 700, y: 480, w: 30, h: 20, target: 'moving', active: false }
+                ],
+                crystals: [{ x: 450, y: 450 }],
+                requiredCrystals: 1
+            },
+            
+            // Level 5: Introduction to boxes
+            {
+                player: { x: 100, y: 400 },
+                exit: { x: 800, y: 420, open: false },
+                platforms: [
+                    { x: 0, y: 500, w: 300, h: 20 },
+                    { x: 400, y: 500, w: 500, h: 20 },
+                    { x: 300, y: 400, w: 50, h: 20 }
+                ],
+                boxes: [
+                    { x: 250, y: 450, w: 30, h: 30 }
+                ],
+                switches: [
+                    { x: 700, y: 480, w: 30, h: 20, target: 'exit', active: false }
+                ],
+                crystals: [{ x: 750, y: 450 }],
+                requiredCrystals: 1
+            },
+            
+            // Level 6: Multiple ghosts
+            {
+                player: { x: 100, y: 400 },
+                exit: { x: 800, y: 200, open: false },
+                platforms: [
+                    { x: 0, y: 500, w: 200, h: 20 },
+                    { x: 300, y: 500, w: 200, h: 20 },
+                    { x: 700, y: 500, w: 200, h: 20 },
+                    { x: 600, y: 300, w: 100, h: 20, id: 'bridge', moving: true }
+                ],
+                boxes: [],
+                switches: [
+                    { x: 400, y: 480, w: 30, h: 20, target: 'bridge', active: false }
+                ],
+                crystals: [
+                    { x: 350, y: 450 },
+                    { x: 750, y: 450 }
+                ],
+                requiredCrystals: 2
+            },
+            
+            // Level 7: Complex puzzle with boxes and switches
+            {
+                player: { x: 100, y: 400 },
+                exit: { x: 800, y: 200, open: false },
+                platforms: [
+                    { x: 0, y: 500, w: 200, h: 20 },
+                    { x: 300, y: 500, w: 200, h: 20 },
+                    { x: 600, y: 500, w: 300, h: 20 },
+                    { x: 200, y: 350, w: 100, h: 20, id: 'platform1', moving: true },
+                    { x: 500, y: 350, w: 100, h: 20, id: 'platform2', moving: true }
+                ],
+                boxes: [
+                    { x: 250, y: 450, w: 30, h: 30 },
+                    { x: 550, y: 450, w: 30, h: 30 }
+                ],
+                switches: [
+                    { x: 400, y: 480, w: 30, h: 20, target: 'platform1', active: false },
+                    { x: 700, y: 480, w: 30, h: 20, target: 'platform2', active: false }
+                ],
+                crystals: [
+                    { x: 350, y: 450 },
+                    { x: 750, y: 450 }
+                ],
+                requiredCrystals: 2
+            },
+            
+            // Level 8: Final challenge
+            {
+                player: { x: 100, y: 400 },
+                exit: { x: 800, y: 200, open: false },
+                platforms: [
+                    { x: 0, y: 500, w: 150, h: 20 },
+                    { x: 250, y: 500, w: 150, h: 20 },
+                    { x: 500, y: 500, w: 150, h: 20 },
+                    { x: 750, y: 500, w: 150, h: 20 },
+                    { x: 300, y: 350, w: 100, h: 20, id: 'bridge1', moving: true },
+                    { x: 600, y: 350, w: 100, h: 20, id: 'bridge2', moving: true }
+                ],
+                boxes: [
+                    { x: 200, y: 450, w: 30, h: 30 },
+                    { x: 450, y: 450, w: 30, h: 30 },
+                    { x: 700, y: 450, w: 30, h: 30 }
+                ],
+                switches: [
+                    { x: 350, y: 480, w: 30, h: 20, target: 'bridge1', active: false },
+                    { x: 650, y: 480, w: 30, h: 20, target: 'bridge2', active: false }
+                ],
+                crystals: [
+                    { x: 300, y: 450 },
+                    { x: 550, y: 450 },
+                    { x: 800, y: 450 }
+                ],
+                requiredCrystals: 3
+            }
+        ];
+
+        // Audio context and sounds
+        let audioContext;
+        let sounds = {};
+
+        // Initialize the game
+        function init() {
+            canvas = document.getElementById('gameCanvas');
+            ctx = canvas.getContext('2d');
+            
+            // Set canvas size
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            
+            // Initialize audio
+            initAudio();
+            
+            // Load saved progress
+            loadProgress();
+            
+            // Set up event listeners
+            setupEventListeners();
+            
+            // Load the first level
+            loadLevel(0);
+            
+            // Start game loop
+            requestAnimationFrame(gameLoop);
+        }
+
+        function resizeCanvas() {
+            const container = document.getElementById('game-container');
+            const ratio = CANVAS_WIDTH / CANVAS_HEIGHT;
+            const width = container.clientWidth;
+            const height = width / ratio;
+            
+            canvas.width = CANVAS_WIDTH;
+            canvas.height = CANVAS_HEIGHT;
+            
+            canvas.style.width = width + 'px';
+            canvas.style.height = height + 'px';
+        }
+
+        function initAudio() {
+            try {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // Create sounds
+                sounds.jump = createSound(150, 0.2, 0.2, 'sawtooth');
+                sounds.collect = createSound(600, 0.1, 0.1, 'sine');
+                sounds.click = createSound(300, 0.1, 0.1, 'sine');
+                sounds.switch = createSound(200, 0.2, 0.2, 'square');
+                sounds.win = createSound(700, 0.5, 0.5, 'sine');
+                
+                // Background music
+                sounds.background = createBackgroundMusic();
+            } catch (e) {
+                console.log("Web Audio API is not supported in this browser");
+            }
+        }
+
+        function createSound(frequency, duration, volume, type) {
+            return function() {
+                if (gameState.muted) return;
+                
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.type = type;
+                oscillator.frequency.value = frequency;
+                gainNode.gain.value = volume;
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.start();
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duration);
+                oscillator.stop(audioContext.currentTime + duration);
+            };
+        }
+
+        function createBackgroundMusic() {
+            // Simple background music using oscillators
+            if (gameState.muted) return;
+            
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.type = 'sine';
+            oscillator.frequency.value = 220;
+            gainNode.gain.value = 0.1;
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.start();
+            
+            // Change note every second
+            let noteIndex = 0;
+            const notes = [220, 264, 330, 352];
+            
+            setInterval(() => {
+                oscillator.frequency.value = notes[noteIndex % notes.length];
+                noteIndex++;
+            }, 1000);
+            
+            return { oscillator, gainNode };
+        }
+
+        function loadProgress() {
+            // Load saved level progress
+            const savedLevel = localStorage.getItem('chronocanvas_level');
+            if (savedLevel) {
+                currentLevel = parseInt(savedLevel);
+                document.getElementById('level-select').value = currentLevel + 1;
+            }
+            
+            // Load mute setting
+            const muted = localStorage.getItem('chronocanvas_muted');
+            if (muted === 'true') {
+                gameState.muted = true;
+                document.getElementById('mute-btn').textContent = 'Unmute';
+            }
+        }
+
+        function saveProgress() {
+            localStorage.setItem('chronocanvas_level', currentLevel);
+            localStorage.setItem('chronocanvas_muted', gameState.muted);
+        }
+
+        function setupEventListeners() {
+            // Keyboard input
+            document.addEventListener('keydown', handleKeyDown);
+            document.addEventListener('keyup', handleKeyUp);
+            
+            // Mouse input for drawing
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', drawPlatform);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseleave', stopDrawing);
+            
+            // Touch input for mobile
+            canvas.addEventListener('touchstart', handleTouchStart);
+            canvas.addEventListener('touchmove', handleTouchMove);
+            canvas.addEventListener('touchend', handleTouchEnd);
+            
+            // UI buttons
+            document.getElementById('toggle-mode').addEventListener('click', toggleMode);
+            document.getElementById('record-btn').addEventListener('click', toggleRecording);
+            document.getElementById('restart-btn').addEventListener('click', restartLevel);
+            document.getElementById('mute-btn').addEventListener('click', toggleMute);
+            document.getElementById('level-select').addEventListener('change', changeLevel);
+            
+            // Mobile controls
+            document.getElementById('left-btn').addEventListener('touchstart', () => gameState.player.vx = -PLAYER_SPEED);
+            document.getElementById('left-btn').addEventListener('touchend', () => gameState.player.vx = 0);
+            document.getElementById('right-btn').addEventListener('touchstart', () => gameState.player.vx = PLAYER_SPEED);
+            document.getElementById('right-btn').addEventListener('touchend', () => gameState.player.vx = 0);
+            document.getElementById('jump-btn').addEventListener('touchstart', () => { if (gameState.player.grounded) gameState.player.vy = JUMP_FORCE; });
+            document.getElementById('mode-btn').addEventListener('click', toggleMode);
+            
+            // Editor buttons
+            document.getElementById('add-platform').addEventListener('click', () => setEditorObject('platform'));
+            document.getElementById('add-box').addEventListener('click', () => setEditorObject('box'));
+            document.getElementById('add-switch').addEventListener('click', () => setEditorObject('switch'));
+            document.getElementById('add-crystal').addEventListener('click', () => setEditorObject('crystal'));
+            document.getElementById('set-start').addEventListener('click', () => setEditorObject('start'));
+            document.getElementById('set-exit').addEventListener('click', () => setEditorObject('exit'));
+            document.getElementById('export-level').addEventListener('click', exportLevel);
+        }
+
+        function handleKeyDown(e) {
+            switch(e.key) {
+                case 'ArrowLeft':
+                case 'a':
+                case 'A':
+                    gameState.player.vx = -PLAYER_SPEED;
+                    break;
+                case 'ArrowRight':
+                case 'd':
+                case 'D':
+                    gameState.player.vx = PLAYER_SPEED;
+                    break;
+                case ' ':
+                    if (gameState.player.grounded) {
+                        gameState.player.vy = JUMP_FORCE;
+                        sounds.jump();
+                    }
+                    break;
+                case 'e':
+                case 'E':
+                case 'Tab':
+                    e.preventDefault();
+                    toggleMode();
+                    break;
+                case 'r':
+                case 'R':
+                    toggleRecording();
+                    break;
+                case 'm':
+                case 'M':
+                    toggleMute();
+                    break;
+                case '`':
+                    // Toggle editor mode (hidden feature)
+                    gameState.editorMode = !gameState.editorMode;
+                    document.getElementById('editor-panel').style.display = gameState.editorMode ? 'flex' : 'none';
+                    break;
+            }
+        }
+
+        function handleKeyUp(e) {
+            switch(e.key) {
+                case 'ArrowLeft':
+                case 'a':
+                case 'A':
+                    if (gameState.player.vx < 0) gameState.player.vx = 0;
+                    break;
+                case 'ArrowRight':
+                case 'd':
+                case 'D':
+                    if (gameState.player.vx > 0) gameState.player.vx = 0;
+                    break;
+            }
+        }
+
+        function handleTouchStart(e) {
+            e.preventDefault();
+            if (gameState.mode === 'draw') {
+                startDrawing(e.touches[0]);
+            }
+        }
+
+        function handleTouchMove(e) {
+            e.preventDefault();
+            if (gameState.mode === 'draw') {
+                drawPlatform(e.touches[0]);
+            }
+        }
+
+        function handleTouchEnd(e) {
+            e.preventDefault();
+            stopDrawing();
+        }
+
+        function startDrawing(e) {
+            if (gameState.mode !== 'draw' || gameState.paint <= 0) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+            const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+            
+            gameState.drawing = {
+                startX: x,
+                startY: y,
+                currentX: x,
+                currentY: y,
+                points: [{x, y}]
+            };
+        }
+
+        function drawPlatform(e) {
+            if (!gameState.drawing || gameState.paint <= 0) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+            const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+            
+            gameState.drawing.currentX = x;
+            gameState.drawing.currentY = y;
+            gameState.drawing.points.push({x, y});
+            
+            // Calculate distance and drain paint
+            const lastPoint = gameState.drawing.points[gameState.drawing.points.length - 2];
+            if (lastPoint) {
+                const dx = x - lastPoint.x;
+                const dy = y - lastPoint.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                gameState.paint -= distance * PAINT_DRAIN_RATE;
+                
+                if (gameState.paint < 0) {
+                    gameState.paint = 0;
+                    stopDrawing();
+                }
+            }
+        }
+
+        function stopDrawing() {
+            if (!gameState.drawing) return;
+            
+            // Create platform from drawn points
+            if (gameState.drawing.points.length > 1) {
+                // Simplify the drawn line
+                const simplified = simplifyLine(gameState.drawing.points, 2);
+                
+                // Create platform segments
+                for (let i = 0; i < simplified.length - 1; i++) {
+                    const p1 = simplified[i];
+                    const p2 = simplified[i + 1];
+                    
+                    const dx = p2.x - p1.x;
+                    const dy = p2.y - p1.y;
+                    const length = Math.sqrt(dx * dx + dy * dy);
+                    const angle = Math.atan2(dy, dx);
+                    
+                    if (length > 5) { // Minimum platform length
+                        gameState.platforms.push({
+                            x: p1.x,
+                            y: p1.y,
+                            w: length,
+                            h: PLATFORM_THICKNESS,
+                            angle: angle
+                        });
+                    }
+                }
+            }
+            
+            gameState.drawing = null;
+        }
+
+        function simplifyLine(points, tolerance) {
+            if (points.length <= 2) return points;
+            
+            // Basic line simplification - keep points that deviate significantly
+            const result = [points[0]];
+            let lastPoint = points[0];
+            
+            for (let i = 1; i < points.length - 1; i++) {
+                const dx1 = points[i].x - lastPoint.x;
+                const dy1 = points[i].y - lastPoint.y;
+                const dx2 = points[i + 1].x - lastPoint.x;
+                const dy2 = points[i + 1].y - lastPoint.y;
+                
+                // Check if the angle is significant
+                const dot = dx1 * dx2 + dy1 * dy2;
+                const mag1 = Math.sqrt(dx1 * dx1 + dy1 * dy1);
+                const mag2 = Math.sqrt(dx2 * dx2 + dy2 * dy2);
+                const angle = Math.acos(dot / (mag1 * mag2));
+                
+                if (angle > tolerance || mag1 > 20) {
+                    result.push(points[i]);
+                    lastPoint = points[i];
+                }
+            }
+            
+            result.push(points[points.length - 1]);
+            return result;
+        }
+
+        function toggleMode() {
+            gameState.mode = gameState.mode === 'draw' ? 'run' : 'draw';
+            document.getElementById('toggle-mode').textContent = 
+                gameState.mode === 'draw' ? 'Draw Mode (E)' : 'Run Mode (E)';
+            sounds.click();
+        }
+
+        function toggleRecording() {
+            gameState.recording = !gameState.recording;
+            document.getElementById('record-btn').textContent = 
+                gameState.recording ? 'Recording (R)' : 'Record (R)';
+            
+            if (gameState.recording) {
+                gameState.recordingData = [];
+                gameState.recordingStartTime = Date.now();
+            } else {
+                // Create ghost from recording
+                if (gameState.recordingData.length > 0) {
+                    gameState.ghosts.push({
+                        data: gameState.recordingData,
+                        startTime: Date.now(),
+                        index: 0
+                    });
+                }
+            }
+            sounds.click();
+        }
+
+        function restartLevel() {
+            loadLevel(currentLevel);
+            sounds.click();
+        }
+
+        function toggleMute() {
+            gameState.muted = !gameState.muted;
+            document.getElementById('mute-btn').textContent = gameState.muted ? 'Unmute' : 'Mute';
+            
+            if (audioContext) {
+                if (gameState.muted) {
+                    sounds.background.gainNode.gain.value = 0;
+                } else {
+                    sounds.background.gainNode.gain.value = 0.1;
+                }
+            }
+            
+            saveProgress();
+            sounds.click();
+        }
+
+        function changeLevel() {
+            const levelIndex = parseInt(document.getElementById('level-select').value) - 1;
+            loadLevel(levelIndex);
+            sounds.click();
+        }
+
+        function loadLevel(levelIndex) {
+            currentLevel = levelIndex;
+            const level = levels[levelIndex];
+            
+            // Reset game state but keep mode and recording state
+            const mode = gameState.mode;
+            const recording = gameState.recording;
+            const muted = gameState.muted;
+            const editorMode = gameState.editorMode;
+            
+            gameState = {
+                mode,
+                recording,
+                muted,
+                editorMode,
+                player: { ...level.player, vx: 0, vy: 0, grounded: false, facing: 1 },
+                paint: MAX_PAINT,
+                crystals: 0,
+                requiredCrystals: level.requiredCrystals,
+                platforms: [...level.platforms],
+                boxes: level.boxes.map(box => ({ ...box })),
+                switches: level.switches.map(sw => ({ ...sw })),
+                crystalsList: level.crystals.map(c => ({ ...c })),
+                exit: { ...level.exit },
+                ghosts: [],
+                recordingData: [],
+                recordingStartTime: 0,
+                editorObject: null
+            };
+            
+            document.getElementById('level-display').textContent = levelIndex + 1;
+            document.getElementById('crystals-display').textContent = '0';
+            document.getElementById('paint-meter').style.width = '100%';
+            document.getElementById('level-select').value = levelIndex + 1;
+            
+            // Save progress if this is a new level
+            if (levelIndex > parseInt(localStorage.getItem('chronocanvas_level') || 0)) {
+                saveProgress();
+            }
+        }
+
+        function setEditorObject(type) {
+            gameState.editorObject = type;
+            sounds.click();
+        }
+
+        function exportLevel() {
+            const level = {
+                player: { ...gameState.player },
+                exit: { ...gameState.exit },
+                platforms: [...gameState.platforms],
+                boxes: [...gameState.boxes],
+                switches: [...gameState.switches],
+                crystals: [...gameState.crystalsList],
+                requiredCrystals: gameState.requiredCrystals
+            };
+            
+            // Remove unnecessary properties
+            delete level.player.vx;
+            delete level.player.vy;
+            delete level.player.grounded;
+            delete level.player.facing;
+            delete level.exit.open;
+            
+            level.switches.forEach(s => delete s.active);
+            level.platforms.forEach(p => delete p.moving);
+            
+            console.log(JSON.stringify(level, null, 2));
+            alert('Level JSON exported to console. Press F12 to view.');
+            sounds.click();
+        }
+
+        function update() {
+            // Update player physics
+            updatePlayer();
+            
+            // Update boxes physics
+            updateBoxes();
+            
+            // Update switches and platforms
+            updateSwitches();
+            
+            // Update ghosts
+            updateGhosts();
+            
+            // Check for crystal collection
+            checkCrystals();
+            
+            // Check for exit
+            checkExit();
+            
+            // Restore paint in draw mode
+            if (gameState.mode === 'draw') {
+                gameState.paint = Math.min(MAX_PAINT, gameState.paint + PAINT_RESTORE_RATE);
+                updatePaintMeter();
+            }
+            
+            // Record player actions if recording
+            if (gameState.recording) {
+                const time = Date.now() - gameState.recordingStartTime;
+                gameState.recordingData.push({
+                    time,
+                    x: gameState.player.x,
+                    y: gameState.player.y,
+                    vx: gameState.player.vx,
+                    vy: gameState.player.vy,
+                    grounded: gameState.player.grounded,
+                    facing: gameState.player.facing
+                });
+            }
+        }
+
+        function updatePlayer() {
+            // Apply gravity
+            gameState.player.vy += GRAVITY;
+            
+            // Update position
+            gameState.player.x += gameState.player.vx;
+            gameState.player.y += gameState.player.vy;
+            
+            // Check boundaries
+            if (gameState.player.x < 0) gameState.player.x = 0;
+            if (gameState.player.x > canvas.width - PLAYER_SIZE) gameState.player.x = canvas.width - PLAYER_SIZE;
+            if (gameState.player.y > canvas.height) {
+                // Fell off the screen - restart level
+                loadLevel(currentLevel);
+                return;
+            }
+            
+            // Reset grounded state
+            gameState.player.grounded = false;
+            
+            // Check collisions with platforms
+            for (const platform of gameState.platforms) {
+                if (checkCollision(gameState.player, PLAYER_SIZE, PLAYER_SIZE, platform)) {
+                    // Platform collision
+                    const prevY = gameState.player.y - gameState.player.vy;
+                    const bottom = prevY + PLAYER_SIZE;
+                    
+                    if (bottom <= platform.y && gameState.player.vy > 0) {
+                        // Landing on top of platform
+                        gameState.player.y = platform.y - PLAYER_SIZE;
+                        gameState.player.vy = 0;
+                        gameState.player.grounded = true;
+                    } else if (gameState.player.y >= platform.y + platform.h) {
+                        // Hitting bottom of platform
+                        gameState.player.y = platform.y + platform.h;
+                        gameState.player.vy = 0;
+                    } else if (gameState.player.x + PLAYER_SIZE <= platform.x && gameState.player.vx > 0) {
+                        // Hitting left side of platform
+                        gameState.player.x = platform.x - PLAYER_SIZE;
+                    } else if (gameState.player.x >= platform.x + platform.w && gameState.player.vx < 0) {
+                        // Hitting right side of platform
+                        gameState.player.x = platform.x + platform.w;
+                    }
+                }
+            }
+            
+            // Check collisions with boxes
+            for (const box of gameState.boxes) {
+                if (checkCollision(gameState.player, PLAYER_SIZE, PLAYER_SIZE, box)) {
+                    // Simple box pushing
+                    if (gameState.player.vx !== 0) {
+                        box.x += gameState.player.vx * 0.5;
+                    }
+                    
+                    // Prevent player from entering box
+                    const prevX = gameState.player.x - gameState.player.vx;
+                    const prevY = gameState.player.y - gameState.player.vy;
+                    
+                    if (prevX + PLAYER_SIZE <= box.x) {
+                        gameState.player.x = box.x - PLAYER_SIZE;
+                    } else if (prevX >= box.x + box.w) {
+                        gameState.player.x = box.x + box.w;
+                    }
+                    
+                    if (prevY + PLAYER_SIZE <= box.y) {
+                        gameState.player.y = box.y - PLAYER_SIZE;
+                        gameState.player.vy = 0;
+                        gameState.player.grounded = true;
+                    } else if (prevY >= box.y + box.h) {
+                        gameState.player.y = box.y + box.h;
+                        gameState.player.vy = 0;
+                    }
+                }
+            }
+            
+            // Update facing direction
+            if (gameState.player.vx !== 0) {
+                gameState.player.facing = Math.sign(gameState.player.vx);
+            }
+        }
+
+        function updateBoxes() {
+            for (const box of gameState.boxes) {
+                // Apply gravity to boxes
+                box.vy = (box.vy || 0) + GRAVITY * 0.5;
+                box.y += box.vy;
+                
+                // Check collisions with platforms
+                let grounded = false;
+                for (const platform of gameState.platforms) {
+                    if (checkCollision(box, box.w, box.h, platform)) {
+                        const prevY = box.y - box.vy;
+                        const bottom = prevY + box.h;
+                        
+                        if (bottom <= platform.y && box.vy > 0) {
+                            // Landing on top of platform
+                            box.y = platform.y - box.h;
+                            box.vy = 0;
+                            grounded = true;
+                        }
+                    }
+                }
+                
+                // Check collisions with other boxes
+                for (const otherBox of gameState.boxes) {
+                    if (box !== otherBox && checkCollision(box, box.w, box.h, otherBox)) {
+                        // Simple separation
+                        const dx = (box.x + box.w/2) - (otherBox.x + otherBox.w/2);
+                        const dy = (box.y + box.h/2) - (otherBox.y + otherBox.h/2);
+                        
+                        if (Math.abs(dx) > Math.abs(dy)) {
+                            box.x += dx > 0 ? 1 : -1;
+                        } else {
+                            box.y += dy > 0 ? 1 : -1;
+                            if (dy > 0) {
+                                box.vy = 0;
+                                grounded = true;
+                            }
+                        }
+                    }
+                }
+                
+                // Reset box if it falls off screen
+                if (box.y > canvas.height) {
+                    const level = levels[currentLevel];
+                    const originalBox = level.boxes.find(b => 
+                        b.x === box.originalX && b.y === box.originalY);
+                    if (originalBox) {
+                        box.x = originalBox.x;
+                        box.y = originalBox.y;
+                    }
+                    box.vy = 0;
+                }
+            }
+        }
+
+        function updateSwitches() {
+            for (const sw of gameState.switches) {
+                // Check if player is on switch
+                sw.active = checkCollision(gameState.player, PLAYER_SIZE, PLAYER_SIZE, sw);
+                
+                // Check if boxes are on switch
+                if (!sw.active) {
+                    for (const box of gameState.boxes) {
+                        if (checkCollision(box, box.w, box.h, sw)) {
+                            sw.active = true;
+                            break;
+                        }
+                    }
+                }
+                
+                // Check if ghosts are on switch
+                if (!sw.active) {
+                    for (const ghost of gameState.ghosts) {
+                        const data = ghost.data[ghost.index];
+                        if (data && checkCollision(
+                            {x: data.x, y: data.y}, 
+                            PLAYER_SIZE, PLAYER_SIZE, 
+                            sw
+                        )) {
+                            sw.active = true;
+                            break;
+                        }
+                    }
+                }
+                
+                // Activate/deactivate target
+                if (sw.active) {
+                    if (sw.target === 'exit') {
+                        gameState.exit.open = true;
+                    } else {
+                        // Find platform with matching ID
+                        const platform = gameState.platforms.find(p => p.id === sw.target);
+                        if (platform) {
+                            platform.moving = false;
+                            // Move platform to activated position
+                            if (platform.activatedY === undefined) {
+                                platform.activatedY = platform.y;
+                            }
+                            platform.y = platform.activatedY;
+                        }
+                    }
+                    sounds.switch();
+                }
+            }
+        }
+
+        function updateGhosts() {
+            const currentTime = Date.now();
+            
+            for (let i = gameState.ghosts.length - 1; i >= 0; i--) {
+                const ghost = gameState.ghosts[i];
+                const elapsed = currentTime - ghost.startTime;
+                
+                // Find the current frame based on time
+                while (ghost.index < ghost.data.length - 1 && 
+                       ghost.data[ghost.index + 1].time <= elapsed) {
+                    ghost.index++;
+                }
+                
+                // Remove ghost if finished
+                if (ghost.index >= ghost.data.length - 1) {
+                    gameState.ghosts.splice(i, 1);
+                    continue;
+                }
+                
+                // Get current ghost data
+                const data = ghost.data[ghost.index];
+                if (!data) continue;
+                
+                // Ghost interactions with boxes
+                for (const box of gameState.boxes) {
+                    if (checkCollision(
+                        {x: data.x, y: data.y}, 
+                        PLAYER_SIZE, PLAYER_SIZE, 
+                        box
+                    )) {
+                        // Simple box pushing by ghost
+                        if (data.vx !== 0) {
+                            box.x += data.vx * 0.3;
+                        }
+                    }
+                }
+                
+                // Ghost interactions with switches
+                for (const sw of gameState.switches) {
+                    if (checkCollision(
+                        {x: data.x, y: data.y}, 
+                        PLAYER_SIZE, PLAYER_SIZE, 
+                        sw
+                    )) {
+                        sw.active = true;
+                    }
+                }
+            }
+        }
+
+        function checkCrystals() {
+            for (let i = gameState.crystalsList.length - 1; i >= 0; i--) {
+                const crystal = gameState.crystalsList[i];
+                
+                if (checkCollision(
+                    gameState.player, 
+                    PLAYER_SIZE, PLAYER_SIZE, 
+                    {x: crystal.x, y: crystal.y, w: 20, h: 20}
+                )) {
+                    gameState.crystalsList.splice(i, 1);
+                    gameState.crystals++;
+                    document.getElementById('crystals-display').textContent = gameState.crystals;
+                    sounds.collect();
+                }
+            }
+        }
+
+        function checkExit() {
+            if (gameState.exit.open && 
+                checkCollision(
+                    gameState.player, 
+                    PLAYER_SIZE, PLAYER_SIZE, 
+                    gameState.exit
+                )) {
+                // Level complete!
+                if (currentLevel < levels.length - 1) {
+                    currentLevel++;
+                    loadLevel(currentLevel);
+                } else {
+                    // Game complete!
+                    alert('Congratulations! You completed all levels!');
+                    currentLevel = 0;
+                    loadLevel(currentLevel);
+                }
+                sounds.win();
+            }
+        }
+
+        function updatePaintMeter() {
+            const percent = (gameState.paint / MAX_PAINT) * 100;
+            document.getElementById('paint-meter').style.width = percent + '%';
+        }
+
+        function checkCollision(obj1, w1, h1, obj2) {
+            return obj1.x < obj2.x + obj2.w &&
+                   obj1.x + w1 > obj2.x &&
+                   obj1.y < obj2.y + obj2.h &&
+                   obj1.y + h1 > obj2.y;
+        }
+
+        function render() {
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw exit
+            ctx.fillStyle = gameState.exit.open ? '#4caf50' : '#f44336';
+            ctx.fillRect(gameState.exit.x, gameState.exit.y, gameState.exit.w, gameState.exit.h);
+            ctx.fillStyle = '#ffffff';
+            ctx.fillText('EXIT', gameState.exit.x + 5, gameState.exit.y + 35);
+            
+            // Draw platforms
+            ctx.fillStyle = '#8d6e63';
+            for (const platform of gameState.platforms) {
+                if (platform.angle) {
+                    // Rotated platform (drawn)
+                    ctx.save();
+                    ctx.translate(platform.x, platform.y);
+                    ctx.rotate(platform.angle);
+                    ctx.fillRect(0, -PLATFORM_THICKNESS/2, platform.w, PLATFORM_THICKNESS);
+                    ctx.restore();
+                } else {
+                    // Regular platform
+                    ctx.fillRect(platform.x, platform.y, platform.w, platform.h);
+                }
+            }
+            
+            // Draw boxes
+            ctx.fillStyle = '#795548';
+            for (const box of gameState.boxes) {
+                ctx.fillRect(box.x, box.y, box.w, box.h);
+            }
+            
+            // Draw switches
+            for (const sw of gameState.switches) {
+                ctx.fillStyle = sw.active ? '#4caf50' : '#f44336';
+                ctx.fillRect(sw.x, sw.y, sw.w, sw.h);
+            }
+            
+            // Draw crystals
+            ctx.fillStyle = '#e91e63';
+            for (const crystal of gameState.crystalsList) {
+                ctx.beginPath();
+                ctx.arc(crystal.x + 10, crystal.y + 10, 10, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            // Draw player
+            ctx.fillStyle = '#2196f3';
+            ctx.fillRect(gameState.player.x, gameState.player.y, PLAYER_SIZE, PLAYER_SIZE);
+            
+            // Draw eyes to indicate facing direction
+            ctx.fillStyle = '#ffffff';
+            if (gameState.player.facing > 0) {
+                ctx.fillRect(gameState.player.x + 14, gameState.player.y + 5, 3, 3);
+            } else {
+                ctx.fillRect(gameState.player.x + 3, gameState.player.y + 5, 3, 3);
+            }
+            
+            // Draw ghosts
+            for (const ghost of gameState.ghosts) {
+                const data = ghost.data[ghost.index];
+                if (data) {
+                    ctx.fillStyle = GHOST_COLOR;
+                    ctx.fillRect(data.x, data.y, PLAYER_SIZE, PLAYER_SIZE);
+                    
+                    // Draw ghost eyes
+                    ctx.fillStyle = '#ffffff';
+                    if (data.facing > 0) {
+                        ctx.fillRect(data.x + 14, data.y + 5, 2, 2);
+                    } else {
+                        ctx.fillRect(data.x + 3, data.y + 5, 2, 2);
+                    }
+                }
+            }
+            
+            // Draw current drawing
+            if (gameState.drawing) {
+                ctx.strokeStyle = '#00ffcc';
+                ctx.lineWidth = PLATFORM_THICKNESS;
+                ctx.lineCap = 'round';
+                ctx.beginPath();
+                ctx.moveTo(gameState.drawing.startX, gameState.drawing.startY);
+                
+                for (const point of gameState.drawing.points) {
+                    ctx.lineTo(point.x, point.y);
+                }
+                
+                ctx.stroke();
+            }
+            
+            // Draw UI text
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '16px monospace';
+            ctx.fillText(`Crystals: ${gameState.crystals}/${gameState.requiredCrystals}`, 10, 30);
+            
+            // Draw editor objects
+            if (gameState.editorMode) {
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+                ctx.fillText('EDITOR MODE', 10, 50);
+            }
+        }
+
+        function gameLoop() {
+            update();
+            render();
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Start the game when the page loads
+        window.addEventListener('load', init);
+    </script>
 </body>
 </html>
